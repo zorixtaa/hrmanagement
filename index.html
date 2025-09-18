@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MW Recruitment Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="theme-light">
+    <div class="app-shell">
+      <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark">MW</div>
+          <div class="brand-copy">
+            <h1>Recruitment Platform</h1>
+            <p>Market Wave Talent Operations</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="view-toggle" role="group" aria-label="Toggle dashboard view">
+            <button class="toggle-button is-active" data-view="admin">Admin</button>
+            <button class="toggle-button" data-view="recruiter">Recruiter</button>
+          </div>
+          <div class="search-filter">
+            <label class="input-label" for="global-search">Search</label>
+            <input
+              id="global-search"
+              type="search"
+              placeholder="Search candidates by name, skill or stage"
+            />
+          </div>
+          <button id="theme-toggle" class="icon-button" aria-label="Toggle theme">
+            <span class="icon">🌙</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section id="admin-dashboard" class="dashboard-section is-visible" aria-labelledby="admin-title">
+          <div class="section-header">
+            <div>
+              <h2 id="admin-title">Admin Oversight</h2>
+              <p>Monitor recruiter throughput, candidate progress and interview velocity.</p>
+            </div>
+            <div class="filter-controls">
+              <div class="filter-group">
+                <label class="input-label" for="filter-recruiter">Recruiter</label>
+                <select id="filter-recruiter">
+                  <option value="all">All Recruiters</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="input-label" for="filter-stage">Stage</label>
+                <select id="filter-stage">
+                  <option value="all">All Stages</option>
+                  <option value="Applied">Applied</option>
+                  <option value="Reviewed">Reviewed</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Interview Scheduled">Interview Scheduled</option>
+                  <option value="Hired">Hired</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="input-label" for="filter-skill">Skill</label>
+                <select id="filter-skill">
+                  <option value="all">All Skills</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <section class="panel" aria-labelledby="kpi-title">
+            <div class="panel-header">
+              <h3 id="kpi-title">Global KPIs</h3>
+              <p>Snapshot of candidate pipeline activity in the last 7 days.</p>
+            </div>
+            <div id="global-kpis" class="kpi-grid"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="performance-title">
+            <div class="panel-header">
+              <h3 id="performance-title">Recruiter Performance</h3>
+              <p>Side-by-side comparison of throughput, quality and responsiveness.</p>
+            </div>
+            <div id="recruiter-performance" class="recruiter-performance"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="timing-title">
+            <div class="panel-header">
+              <h3 id="timing-title">Time-to-Decision</h3>
+              <p>Average turnaround by funnel stage for each recruiter.</p>
+            </div>
+            <div class="table-container">
+              <table class="data-table" id="time-to-decision-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Recruiter</th>
+                    <th scope="col">Reviewed</th>
+                    <th scope="col">Approved</th>
+                    <th scope="col">Rejected</th>
+                    <th scope="col">Interview Scheduled</th>
+                    <th scope="col">Hired</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="funnel-title">
+            <div class="panel-header">
+              <h3 id="funnel-title">Candidate Funnel</h3>
+              <p>Flow of candidates through each stage of the hiring pipeline.</p>
+            </div>
+            <div id="funnel-visualization" class="funnel"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="assignment-title">
+            <div class="panel-header">
+              <div>
+                <h3 id="assignment-title">Candidate Assignment</h3>
+                <p>Assign, monitor and approve candidates in a single workspace.</p>
+              </div>
+              <div class="panel-actions">
+                <button id="bulk-approve" class="primary">Bulk Approve</button>
+                <button id="bulk-reject" class="ghost">Bulk Reject</button>
+                <button id="bulk-schedule" class="ghost">Schedule Interviews</button>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="data-table" id="assignment-table">
+                <thead>
+                  <tr>
+                    <th scope="col">
+                      <input id="select-all" type="checkbox" aria-label="Select all candidates" />
+                    </th>
+                    <th scope="col">Candidate</th>
+                    <th scope="col">Assigned Recruiter</th>
+                    <th scope="col">Skills</th>
+                    <th scope="col">Experience</th>
+                    <th scope="col">Stage</th>
+                    <th scope="col">Time in Stage</th>
+                    <th scope="col">CV</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="admin-controls-title">
+            <div class="panel-header">
+              <h3 id="admin-controls-title">Admin Controls</h3>
+              <p>Manage recruiter roster and export up-to-date performance snapshots.</p>
+            </div>
+            <div class="admin-controls-grid">
+              <form id="add-recruiter-form" class="card" aria-label="Add recruiter">
+                <h4>Add Recruiter</h4>
+                <label class="input-label" for="recruiter-name">Full name</label>
+                <input id="recruiter-name" name="name" type="text" placeholder="Jordan Smith" required />
+
+                <label class="input-label" for="recruiter-email">Email</label>
+                <input id="recruiter-email" name="email" type="email" placeholder="jordan@marketwave.com" required />
+
+                <label class="input-label" for="recruiter-target">Weekly target</label>
+                <input id="recruiter-target" name="target" type="number" min="1" max="50" value="10" />
+
+                <button type="submit" class="primary full-width">Add Recruiter</button>
+              </form>
+
+              <div class="card" aria-live="polite" id="recruiter-roster">
+                <div class="card-header">
+                  <h4>Recruiter Roster</h4>
+                  <p>Active team with current workload distribution.</p>
+                </div>
+                <ul class="list" id="recruiter-list"></ul>
+              </div>
+
+              <div class="card" id="export-panel">
+                <div class="card-header">
+                  <h4>Reporting</h4>
+                  <p>Share snapshots of recruiter performance and funnel movement.</p>
+                </div>
+                <div class="export-actions">
+                  <button id="export-csv" class="primary">Export Excel (CSV)</button>
+                  <button id="export-pdf" class="ghost">Export PDF</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section id="recruiter-dashboard" class="dashboard-section" aria-labelledby="recruiter-title">
+          <div class="section-header">
+            <div>
+              <h2 id="recruiter-title">Recruiter Workspace</h2>
+              <p>Your personal pipeline, focus areas and upcoming interviews.</p>
+            </div>
+            <div class="section-header-actions">
+              <div class="filter-group">
+                <label class="input-label" for="recruiter-view-selector">Recruiter</label>
+                <select id="recruiter-view-selector"></select>
+              </div>
+              <div class="filter-group">
+                <label class="input-label" for="recruiter-focus">Focus range</label>
+                <select id="recruiter-focus">
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="input-label" for="recruiter-candidate-filter">Show</label>
+                <select id="recruiter-candidate-filter">
+                  <option value="all">All Candidates</option>
+                  <option value="pending">Pending Review</option>
+                  <option value="interview">Interviews Scheduled</option>
+                  <option value="approved">Approved</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="recruiter-grid">
+            <section class="card highlight" aria-labelledby="recruiter-progress-title">
+              <div class="card-header">
+                <h3 id="recruiter-progress-title">Progress</h3>
+                <p id="recruiter-progress-subtitle">Daily pace compared to goal.</p>
+              </div>
+              <div class="progress-ring" id="recruiter-progress-ring" aria-hidden="true"></div>
+              <dl class="metric-pairs" id="recruiter-metrics"></dl>
+            </section>
+
+            <section class="card" aria-labelledby="queue-title">
+              <div class="card-header">
+                <h3 id="queue-title">Candidate Queue</h3>
+                <p>Review, approve or schedule interviews with one click.</p>
+              </div>
+              <div class="queue" id="recruiter-queue"></div>
+            </section>
+
+            <section class="card" aria-labelledby="notification-title">
+              <div class="card-header">
+                <h3 id="notification-title">Notifications</h3>
+                <p>Candidates waiting on your next move.</p>
+              </div>
+              <ul class="list" id="recruiter-notifications"></ul>
+            </section>
+
+            <section class="card" aria-labelledby="scheduler-title">
+              <div class="card-header">
+                <h3 id="scheduler-title">Interview Scheduler</h3>
+                <p>Reserve slots and automatically notify the candidate.</p>
+              </div>
+              <form id="interview-form" class="form-grid">
+                <label class="input-label" for="interview-candidate">Candidate</label>
+                <select id="interview-candidate" required></select>
+
+                <label class="input-label" for="interview-date">Date</label>
+                <input id="interview-date" type="date" required />
+
+                <label class="input-label" for="interview-time">Time</label>
+                <input id="interview-time" type="time" required />
+
+                <label class="input-label" for="interview-mode">Mode</label>
+                <select id="interview-mode">
+                  <option value="Virtual">Virtual</option>
+                  <option value="Onsite">Onsite</option>
+                </select>
+
+                <label class="input-label" for="interview-location">Location / Link</label>
+                <input id="interview-location" type="text" placeholder="Teams link or HQ Room 3" />
+
+                <button type="submit" class="primary full-width">Schedule Interview</button>
+              </form>
+              <div class="schedule-list" id="upcoming-interviews" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <p>© <span id="year"></span> Market Wave. Built for data-first talent teams.</p>
+      </footer>
+    </div>
+    <script src="scripts/app.js" type="module"></script>
+  </body>
+</html>
