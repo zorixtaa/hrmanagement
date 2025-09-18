@@ -14,6 +14,234 @@ const API_ROUTES = {
   recruiters: '/api/recruiters'
 };
 
+const LOCAL_SEED = {
+  baseline: {
+    totalCandidates: 22,
+    pendingReviews: 11,
+    approved: 8,
+    interviews: 4,
+    avgTimeToHire: 52
+  },
+  recruiters: [
+    {
+      id: 'r1',
+      name: 'Jordan Lee',
+      email: 'jordan.lee@marketwave.com',
+      specialty: 'Marketing & Growth',
+      weeklyTarget: 12,
+      decisionTimes: {
+        Reviewed: 18,
+        Approved: 26,
+        Rejected: 11,
+        'Interview Scheduled': 20,
+        Hired: 96
+      }
+    },
+    {
+      id: 'r2',
+      name: 'Priya Natarajan',
+      email: 'priya.natarajan@marketwave.com',
+      specialty: 'Product & Data',
+      weeklyTarget: 10,
+      decisionTimes: {
+        Reviewed: 14,
+        Approved: 32,
+        Rejected: 9,
+        'Interview Scheduled': 18,
+        Hired: 88
+      }
+    },
+    {
+      id: 'r3',
+      name: 'Miles Carter',
+      email: 'miles.carter@marketwave.com',
+      specialty: 'Sales & Success',
+      weeklyTarget: 11,
+      decisionTimes: {
+        Reviewed: 21,
+        Approved: 29,
+        Rejected: 13,
+        'Interview Scheduled': 26,
+        Hired: 102
+      }
+    }
+  ],
+  candidates: [
+    {
+      id: 'c1',
+      name: 'Ava Martinez',
+      role: 'Growth Marketing Manager',
+      contact: 'ava.martinez@email.com',
+      phone: '(555) 210-2210',
+      location: 'Austin, TX (Remote)',
+      experience: 6,
+      assignedRecruiterId: 'r1',
+      stage: 'Applied',
+      stageStarted: '2025-09-15',
+      skills: ['Demand Generation', 'SQL', 'HubSpot'],
+      cvFile: 'Ava_Martinez_CV.pdf',
+      notes: 'Looking for hyper-growth environments and strong analytics stack.'
+    },
+    {
+      id: 'c2',
+      name: 'Theo Andersen',
+      role: 'Senior Product Analyst',
+      contact: 'theo.andersen@email.com',
+      phone: '(555) 412-0081',
+      location: 'Seattle, WA',
+      experience: 7,
+      assignedRecruiterId: 'r2',
+      stage: 'Reviewed',
+      stageStarted: '2025-09-12',
+      skills: ['Product Strategy', 'SQL', 'Python', 'Experimentation'],
+      cvFile: null,
+      notes: 'Led activation workstreams for B2B SaaS companies.'
+    },
+    {
+      id: 'c3',
+      name: 'Zoe Wright',
+      role: 'Enterprise Account Executive',
+      contact: 'zoe.wright@email.com',
+      phone: '(555) 901-3333',
+      location: 'New York, NY',
+      experience: 9,
+      assignedRecruiterId: 'r3',
+      stage: 'Approved',
+      stageStarted: '2025-09-10',
+      skills: ['Enterprise Sales', 'MEDDIC', 'Forecasting'],
+      cvFile: 'Zoe_Wright_CV.pdf',
+      notes: 'Top 5% performer with consistent quota attainment.'
+    },
+    {
+      id: 'c4',
+      name: 'Noah Ibrahim',
+      role: 'Customer Success Lead',
+      contact: 'noah.ibrahim@email.com',
+      phone: '(555) 714-6600',
+      location: 'Chicago, IL (Hybrid)',
+      experience: 8,
+      assignedRecruiterId: 'r3',
+      stage: 'Interview Scheduled',
+      stageStarted: '2025-09-14',
+      skills: ['Customer Journeys', 'Churn Reduction', 'Playbooks'],
+      cvFile: 'Noah_Ibrahim_CV.pdf',
+      notes: 'Scaled success org from 4 to 18 CSMs.'
+    },
+    {
+      id: 'c5',
+      name: 'Maya Chen',
+      role: 'Lifecycle Marketing Strategist',
+      contact: 'maya.chen@email.com',
+      phone: '(555) 091-7221',
+      location: 'San Francisco, CA',
+      experience: 5,
+      assignedRecruiterId: 'r1',
+      stage: 'Reviewed',
+      stageStarted: '2025-09-11',
+      skills: ['Lifecycle Automation', 'Amplitude', 'Copywriting'],
+      cvFile: null,
+      notes: 'Piloted re-engagement campaigns with 18% uplift.'
+    },
+    {
+      id: 'c6',
+      name: 'Gabriel Santos',
+      role: 'Product Marketing Manager',
+      contact: 'gabriel.santos@email.com',
+      phone: '(555) 301-4422',
+      location: 'Remote - Miami, FL',
+      experience: 6,
+      assignedRecruiterId: 'r1',
+      stage: 'Interview Scheduled',
+      stageStarted: '2025-09-13',
+      skills: ['Positioning', 'Competitive Research', 'GTM'],
+      cvFile: 'Gabriel_Santos_CV.pdf',
+      notes: 'Owned 4 product launches across LATAM & US markets.'
+    },
+    {
+      id: 'c7',
+      name: 'Harper Singh',
+      role: 'Revenue Operations Manager',
+      contact: 'harper.singh@email.com',
+      phone: '(555) 601-8202',
+      location: 'Denver, CO',
+      experience: 7,
+      assignedRecruiterId: 'r2',
+      stage: 'Hired',
+      stageStarted: '2025-09-08',
+      stageCompleted: '2025-09-16',
+      skills: ['RevOps', 'Salesforce', 'Forecasting'],
+      cvFile: 'Harper_Singh_CV.pdf',
+      notes: 'Implemented unified revenue dashboard across teams.'
+    },
+    {
+      id: 'c8',
+      name: 'Isabella Costa',
+      role: 'Data Scientist - Growth',
+      contact: 'isabella.costa@email.com',
+      phone: '(555) 770-1202',
+      location: 'Remote - Lisbon',
+      experience: 5,
+      assignedRecruiterId: 'r2',
+      stage: 'Approved',
+      stageStarted: '2025-09-09',
+      skills: ['Python', 'Forecasting', 'Tableau'],
+      cvFile: 'Isabella_Costa_CV.pdf',
+      notes: 'Former fintech lead with strong experimentation background.'
+    },
+    {
+      id: 'c9',
+      name: 'Leo Fernandez',
+      role: 'Partnerships Manager',
+      contact: 'leo.fernandez@email.com',
+      phone: '(555) 205-3221',
+      location: 'Los Angeles, CA',
+      experience: 6,
+      assignedRecruiterId: 'r3',
+      stage: 'Applied',
+      stageStarted: '2025-09-16',
+      skills: ['Partnerships', 'Negotiation', 'Event Strategy'],
+      cvFile: null,
+      notes: 'Built co-marketing programs with enterprise retailers.'
+    },
+    {
+      id: 'c10',
+      name: 'Riley Chen',
+      role: 'Sales Enablement Lead',
+      contact: 'riley.chen@email.com',
+      phone: '(555) 410-5577',
+      location: 'Remote - Vancouver',
+      experience: 8,
+      assignedRecruiterId: 'r3',
+      stage: 'Rejected',
+      stageStarted: '2025-09-07',
+      skills: ['Enablement Programs', 'Content Strategy', 'Salesforce'],
+      cvFile: 'Riley_Chen_CV.pdf',
+      notes: "Strong enablement, but lacking enterprise SaaS experience."
+    }
+  ],
+  interviews: [
+    {
+      id: 'i1',
+      candidateId: 'c4',
+      recruiterId: 'r3',
+      date: '2025-09-19',
+      time: '15:30',
+      mode: 'Virtual',
+      location: 'Zoom • https://marketwave.zoom/i1'
+    },
+    {
+      id: 'i2',
+      candidateId: 'c6',
+      recruiterId: 'r1',
+      date: '2025-09-18',
+      time: '10:00',
+      mode: 'Virtual',
+      location: 'Google Meet • https://meet.google.com/mw-gs'
+    }
+  ],
+  activeRecruiterId: 'r1'
+};
+
 const state = {
   view: 'admin',
   theme: 'light',
@@ -41,17 +269,20 @@ const state = {
   isLoading: false
 };
 
+applyRemoteState(LOCAL_SEED);
+
 function applyRemoteState(data) {
   if (!data || typeof data !== 'object') return;
+  const safeData = cloneDeep(data) || {};
   state.baseline = {
     ...state.baseline,
-    ...(data.baseline || {})
+    ...(safeData.baseline || {})
   };
-  state.recruiters = Array.isArray(data.recruiters) ? data.recruiters : [];
-  state.candidates = Array.isArray(data.candidates) ? data.candidates : [];
-  state.interviews = Array.isArray(data.interviews) ? data.interviews : [];
+  state.recruiters = Array.isArray(safeData.recruiters) ? safeData.recruiters : [];
+  state.candidates = Array.isArray(safeData.candidates) ? safeData.candidates : [];
+  state.interviews = Array.isArray(safeData.interviews) ? safeData.interviews : [];
   state.activeRecruiterId =
-    data.activeRecruiterId || state.activeRecruiterId || state.recruiters[0]?.id || null;
+    safeData.activeRecruiterId || state.activeRecruiterId || state.recruiters[0]?.id || null;
   ensureActiveRecruiter();
 }
 
@@ -144,21 +375,33 @@ async function hydrateStateFromApi() {
     applyRemoteState(payload?.data || payload);
   } catch (error) {
     console.error('Failed to load recruitment state from API.', error);
-    try {
-      const fallbackResponse = await fetch('data/seed.json');
-      if (fallbackResponse.ok) {
-        const fallback = await fallbackResponse.json();
-        applyRemoteState(fallback);
-        pushToast('Loaded local sample data while the API is unreachable.', 'warning');
-        return;
-      }
-    } catch (fallbackError) {
-      console.error('Failed to load fallback data.', fallbackError);
+    const fallbackLoaded = await applyFallbackData();
+    if (!fallbackLoaded) {
+      pushToast('Unable to load recruitment data. Please try again shortly.', 'warning');
     }
-    pushToast('Unable to load recruitment data. Please try again shortly.', 'warning');
   } finally {
     state.isLoading = false;
   }
+}
+
+async function applyFallbackData() {
+  try {
+    const fallbackResponse = await fetch('data/seed.json');
+    if (fallbackResponse.ok) {
+      const fallback = await fallbackResponse.json();
+      applyRemoteState(fallback);
+      pushToast('Loaded local sample data while the API is unreachable.', 'warning');
+      return true;
+    }
+  } catch (fallbackError) {
+    console.error('Failed to load fallback data.', fallbackError);
+  }
+  if (LOCAL_SEED?.recruiters?.length) {
+    applyRemoteState(LOCAL_SEED);
+    pushToast('Loaded built-in sample data while offline. Changes will not persist.', 'warning');
+    return true;
+  }
+  return false;
 }
 
 const elements = {
@@ -1169,6 +1412,20 @@ function updateFocusSubtitle() {
     month: 'Monthly hiring momentum overview.'
   };
   subtitle.textContent = mapping[state.recruiterFilters.range];
+}
+
+function cloneDeep(value) {
+  if (value === undefined || value === null) {
+    return value;
+  }
+  if (typeof structuredClone === 'function') {
+    try {
+      return structuredClone(value);
+    } catch (error) {
+      // Fallback to JSON cloning below.
+    }
+  }
+  return JSON.parse(JSON.stringify(value));
 }
 
 function buildNotificationsForRecruiter(recruiterId) {
