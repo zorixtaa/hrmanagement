@@ -1,0 +1,1158 @@
+const STAGES = [
+  'Applied',
+  'Reviewed',
+  'Approved',
+  'Interview Scheduled',
+  'Hired',
+  'Rejected'
+];
+
+const state = {
+  view: 'admin',
+  theme: 'light',
+  filters: {
+    recruiter: 'all',
+    stage: 'all',
+    skill: 'all',
+    search: ''
+  },
+  recruiterFilters: {
+    range: 'today',
+    queue: 'all'
+  },
+  baseline: {
+    totalCandidates: 22,
+    pendingReviews: 11,
+    approved: 8,
+    interviews: 4,
+    avgTimeToHire: 52
+  },
+  recruiters: [
+    {
+      id: 'r1',
+      name: 'Jordan Lee',
+      email: 'jordan.lee@marketwave.com',
+      specialty: 'Marketing & Growth',
+      weeklyTarget: 12,
+      decisionTimes: {
+        Reviewed: 18,
+        Approved: 26,
+        Rejected: 11,
+        'Interview Scheduled': 20,
+        Hired: 96
+      }
+    },
+    {
+      id: 'r2',
+      name: 'Priya Natarajan',
+      email: 'priya.natarajan@marketwave.com',
+      specialty: 'Product & Data',
+      weeklyTarget: 10,
+      decisionTimes: {
+        Reviewed: 14,
+        Approved: 32,
+        Rejected: 9,
+        'Interview Scheduled': 18,
+        Hired: 88
+      }
+    },
+    {
+      id: 'r3',
+      name: 'Miles Carter',
+      email: 'miles.carter@marketwave.com',
+      specialty: 'Sales & Success',
+      weeklyTarget: 11,
+      decisionTimes: {
+        Reviewed: 21,
+        Approved: 29,
+        Rejected: 13,
+        'Interview Scheduled': 26,
+        Hired: 102
+      }
+    }
+  ],
+  candidates: [
+    {
+      id: 'c1',
+      name: 'Ava Martinez',
+      role: 'Growth Marketing Manager',
+      contact: 'ava.martinez@email.com',
+      phone: '(555) 210-2210',
+      location: 'Austin, TX (Remote)',
+      experience: 6,
+      assignedRecruiterId: 'r1',
+      stage: 'Applied',
+      stageStarted: '2025-09-15',
+      skills: ['Demand Generation', 'SQL', 'HubSpot'],
+      cvFile: 'Ava_Martinez_CV.pdf',
+      notes: 'Looking for hyper-growth environments and strong analytics stack.'
+    },
+    {
+      id: 'c2',
+      name: 'Theo Andersen',
+      role: 'Senior Product Analyst',
+      contact: 'theo.andersen@email.com',
+      phone: '(555) 412-0081',
+      location: 'Seattle, WA',
+      experience: 7,
+      assignedRecruiterId: 'r2',
+      stage: 'Reviewed',
+      stageStarted: '2025-09-12',
+      skills: ['Product Strategy', 'SQL', 'Python', 'Experimentation'],
+      cvFile: null,
+      notes: 'Led activation workstreams for B2B SaaS companies.'
+    },
+    {
+      id: 'c3',
+      name: 'Zoe Wright',
+      role: 'Enterprise Account Executive',
+      contact: 'zoe.wright@email.com',
+      phone: '(555) 901-3333',
+      location: 'New York, NY',
+      experience: 9,
+      assignedRecruiterId: 'r3',
+      stage: 'Approved',
+      stageStarted: '2025-09-10',
+      skills: ['Enterprise Sales', 'MEDDIC', 'Forecasting'],
+      cvFile: 'Zoe_Wright_CV.pdf',
+      notes: 'Top 5% performer with consistent quota attainment.'
+    },
+    {
+      id: 'c4',
+      name: 'Noah Ibrahim',
+      role: 'Customer Success Lead',
+      contact: 'noah.ibrahim@email.com',
+      phone: '(555) 714-6600',
+      location: 'Chicago, IL (Hybrid)',
+      experience: 8,
+      assignedRecruiterId: 'r3',
+      stage: 'Interview Scheduled',
+      stageStarted: '2025-09-14',
+      skills: ['Customer Journeys', 'Churn Reduction', 'Playbooks'],
+      cvFile: 'Noah_Ibrahim_CV.pdf',
+      notes: 'Scaled success org from 4 to 18 CSMs.'
+    },
+    {
+      id: 'c5',
+      name: 'Maya Chen',
+      role: 'Lifecycle Marketing Strategist',
+      contact: 'maya.chen@email.com',
+      phone: '(555) 091-7221',
+      location: 'San Francisco, CA',
+      experience: 5,
+      assignedRecruiterId: 'r1',
+      stage: 'Reviewed',
+      stageStarted: '2025-09-11',
+      skills: ['Lifecycle Automation', 'Amplitude', 'Copywriting'],
+      cvFile: null,
+      notes: 'Piloted re-engagement campaigns with 18% uplift.'
+    },
+    {
+      id: 'c6',
+      name: 'Gabriel Santos',
+      role: 'Product Marketing Manager',
+      contact: 'gabriel.santos@email.com',
+      phone: '(555) 301-4422',
+      location: 'Remote - Miami, FL',
+      experience: 6,
+      assignedRecruiterId: 'r1',
+      stage: 'Interview Scheduled',
+      stageStarted: '2025-09-13',
+      skills: ['Positioning', 'Competitive Research', 'GTM'],
+      cvFile: 'Gabriel_Santos_CV.pdf',
+      notes: 'Owned 4 product launches across LATAM & US markets.'
+    },
+    {
+      id: 'c7',
+      name: 'Harper Singh',
+      role: 'Revenue Operations Manager',
+      contact: 'harper.singh@email.com',
+      phone: '(555) 601-8202',
+      location: 'Denver, CO',
+      experience: 7,
+      assignedRecruiterId: 'r2',
+      stage: 'Hired',
+      stageStarted: '2025-09-08',
+      stageCompleted: '2025-09-16',
+      skills: ['RevOps', 'Salesforce', 'Forecasting'],
+      cvFile: 'Harper_Singh_CV.pdf',
+      notes: 'Implemented unified revenue dashboard across teams.'
+    },
+    {
+      id: 'c8',
+      name: 'Isabella Costa',
+      role: 'Data Scientist - Growth',
+      contact: 'isabella.costa@email.com',
+      phone: '(555) 770-1202',
+      location: 'Remote - Lisbon',
+      experience: 5,
+      assignedRecruiterId: 'r2',
+      stage: 'Approved',
+      stageStarted: '2025-09-09',
+      skills: ['Python', 'Forecasting', 'Tableau'],
+      cvFile: 'Isabella_Costa_CV.pdf',
+      notes: 'Former fintech lead with strong experimentation background.'
+    },
+    {
+      id: 'c9',
+      name: 'Leo Fernandez',
+      role: 'Partnerships Manager',
+      contact: 'leo.fernandez@email.com',
+      phone: '(555) 205-3221',
+      location: 'Los Angeles, CA',
+      experience: 6,
+      assignedRecruiterId: 'r3',
+      stage: 'Applied',
+      stageStarted: '2025-09-16',
+      skills: ['Partnerships', 'Negotiation', 'Event Strategy'],
+      cvFile: null,
+      notes: 'Built co-marketing programs with enterprise retailers.'
+    },
+    {
+      id: 'c10',
+      name: 'Riley Chen',
+      role: 'Sales Enablement Lead',
+      contact: 'riley.chen@email.com',
+      phone: '(555) 410-5577',
+      location: 'Remote - Vancouver',
+      experience: 8,
+      assignedRecruiterId: 'r3',
+      stage: 'Rejected',
+      stageStarted: '2025-09-07',
+      skills: ['Enablement Programs', 'Content Strategy', 'Salesforce'],
+      cvFile: 'Riley_Chen_CV.pdf',
+      notes: 'Strong enablement, but lacking enterprise SaaS experience.'
+    }
+  ],
+  interviews: [
+    {
+      id: 'i1',
+      candidateId: 'c4',
+      recruiterId: 'r3',
+      date: '2025-09-19',
+      time: '15:30',
+      mode: 'Virtual',
+      location: 'Zoom • https://marketwave.zoom/i1'
+    },
+    {
+      id: 'i2',
+      candidateId: 'c6',
+      recruiterId: 'r1',
+      date: '2025-09-18',
+      time: '10:00',
+      mode: 'Virtual',
+      location: 'Google Meet • https://meet.google.com/mw-gs'
+    }
+  ],
+  activeRecruiterId: 'r1'
+};
+
+const elements = {
+  adminSection: document.getElementById('admin-dashboard'),
+  recruiterSection: document.getElementById('recruiter-dashboard'),
+  globalSearch: document.getElementById('global-search'),
+  filterRecruiter: document.getElementById('filter-recruiter'),
+  filterStage: document.getElementById('filter-stage'),
+  filterSkill: document.getElementById('filter-skill'),
+  kpiContainer: document.getElementById('global-kpis'),
+  recruiterPerformance: document.getElementById('recruiter-performance'),
+  timeToDecisionTable: document.querySelector('#time-to-decision-table tbody'),
+  funnelContainer: document.getElementById('funnel-visualization'),
+  assignmentTableBody: document.querySelector('#assignment-table tbody'),
+  selectAllCheckbox: document.getElementById('select-all'),
+  rosterList: document.getElementById('recruiter-list'),
+  addRecruiterForm: document.getElementById('add-recruiter-form'),
+  recruiterViewSelector: document.getElementById('recruiter-view-selector'),
+  recruiterFocus: document.getElementById('recruiter-focus'),
+  recruiterQueueFilter: document.getElementById('recruiter-candidate-filter'),
+  recruiterProgressRing: document.getElementById('recruiter-progress-ring'),
+  recruiterMetrics: document.getElementById('recruiter-metrics'),
+  recruiterQueue: document.getElementById('recruiter-queue'),
+  recruiterNotifications: document.getElementById('recruiter-notifications'),
+  interviewForm: document.getElementById('interview-form'),
+  interviewCandidateSelect: document.getElementById('interview-candidate'),
+  interviewDate: document.getElementById('interview-date'),
+  interviewTime: document.getElementById('interview-time'),
+  interviewMode: document.getElementById('interview-mode'),
+  interviewLocation: document.getElementById('interview-location'),
+  upcomingInterviews: document.getElementById('upcoming-interviews'),
+  bulkApprove: document.getElementById('bulk-approve'),
+  bulkReject: document.getElementById('bulk-reject'),
+  bulkSchedule: document.getElementById('bulk-schedule'),
+  themeToggle: document.getElementById('theme-toggle'),
+  toastContainer: document.getElementById('toast-container'),
+  viewToggleButtons: document.querySelectorAll('.toggle-button'),
+  exportCsv: document.getElementById('export-csv'),
+  exportPdf: document.getElementById('export-pdf'),
+  year: document.getElementById('year')
+};
+
+document.body.classList.remove('theme-dark');
+document.body.classList.add('theme-light');
+
+elements.year.textContent = new Date().getFullYear();
+
+initialize();
+
+function initialize() {
+  setupEventListeners();
+  populateRecruiterOptions();
+  populateSkillFilter();
+  updateView();
+  renderAll();
+}
+
+function setupEventListeners() {
+  elements.viewToggleButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const view = button.dataset.view;
+      if (state.view === view) return;
+      state.view = view;
+      elements.viewToggleButtons.forEach((btn) => btn.classList.toggle('is-active', btn === button));
+      updateView();
+    });
+  });
+
+  elements.globalSearch.addEventListener('input', (event) => {
+    state.filters.search = event.target.value.trim().toLowerCase();
+    renderAdminPanels();
+  });
+
+  elements.filterRecruiter.addEventListener('change', (event) => {
+    state.filters.recruiter = event.target.value;
+    renderAdminPanels();
+  });
+
+  elements.filterStage.addEventListener('change', (event) => {
+    state.filters.stage = event.target.value;
+    renderAdminPanels();
+  });
+
+  elements.filterSkill.addEventListener('change', (event) => {
+    state.filters.skill = event.target.value;
+    renderAdminPanels();
+  });
+
+  elements.selectAllCheckbox.addEventListener('change', (event) => {
+    const checked = event.target.checked;
+    elements.assignmentTableBody.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+      checkbox.checked = checked;
+    });
+  });
+
+  elements.bulkApprove.addEventListener('click', () => handleBulkAction('Approved'));
+  elements.bulkReject.addEventListener('click', () => handleBulkAction('Rejected'));
+  elements.bulkSchedule.addEventListener('click', () => handleBulkSchedule());
+
+  elements.addRecruiterForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const name = formData.get('name').trim();
+    const email = formData.get('email').trim();
+    const target = Number(formData.get('target')) || 10;
+    if (!name || !email) {
+      pushToast('Please provide a name and email for the recruiter.', 'warning');
+      return;
+    }
+
+    const id = `r${Date.now()}`;
+    state.recruiters.push({
+      id,
+      name,
+      email,
+      specialty: 'New Recruiter',
+      weeklyTarget: target,
+      decisionTimes: {
+        Reviewed: 24,
+        Approved: 36,
+        Rejected: 14,
+        'Interview Scheduled': 28,
+        Hired: 110
+      }
+    });
+    state.activeRecruiterId = id;
+    populateRecruiterOptions();
+    renderAll();
+    event.target.reset();
+    pushToast(`${name} was added to the recruiter roster.`, 'success');
+  });
+
+  elements.recruiterViewSelector.addEventListener('change', (event) => {
+    state.activeRecruiterId = event.target.value;
+    renderRecruiterPanels();
+  });
+
+  elements.recruiterFocus.addEventListener('change', (event) => {
+    state.recruiterFilters.range = event.target.value;
+    updateFocusSubtitle();
+  });
+
+  elements.recruiterQueueFilter.addEventListener('change', (event) => {
+    state.recruiterFilters.queue = event.target.value;
+    renderRecruiterQueue();
+  });
+
+  elements.recruiterQueue.addEventListener('click', (event) => {
+    const actionButton = event.target.closest('button[data-action]');
+    if (!actionButton) return;
+    const { action, id } = actionButton.dataset;
+    if (!id) return;
+    if (action === 'approve') {
+      updateCandidateStage(id, 'Approved');
+      pushToast('Candidate approved for interview.', 'success');
+    } else if (action === 'reject') {
+      updateCandidateStage(id, 'Rejected');
+      pushToast('Candidate marked as rejected.', 'warning');
+    } else if (action === 'schedule') {
+      prefillInterviewForm(id);
+      pushToast('Candidate pre-filled in interview scheduler.', 'success');
+    } else if (action === 'cv') {
+      const candidate = getCandidate(id);
+      if (candidate?.cvFile) {
+        pushToast(`CV ready for download: ${candidate.cvFile}`, 'success');
+      } else {
+        pushToast('No CV uploaded yet. Request documents from the candidate.', 'warning');
+      }
+    }
+    renderAll();
+  });
+
+  elements.assignmentTableBody.addEventListener('change', (event) => {
+    const select = event.target;
+    if (select.matches('.assignment-select')) {
+      const candidateId = select.dataset.id;
+      updateCandidateRecruiter(candidateId, select.value);
+      pushToast('Candidate reassigned successfully.', 'success');
+      renderAll();
+    }
+
+    if (select.matches('.stage-select')) {
+      const candidateId = select.dataset.id;
+      updateCandidateStage(candidateId, select.value);
+      pushToast('Candidate stage updated.', 'success');
+      renderAll();
+    }
+
+    if (select.matches('.cv-upload')) {
+      const candidateId = select.dataset.id;
+      const file = select.files?.[0];
+      if (file) {
+        const candidate = getCandidate(candidateId);
+        candidate.cvFile = file.name;
+        pushToast(`CV for ${candidate.name} uploaded: ${file.name}`, 'success');
+        renderAssignmentTable();
+      }
+    }
+
+    if (select.matches("input[type='checkbox']")) {
+      const allChecked =
+        elements.assignmentTableBody.querySelectorAll("input[type='checkbox']").length > 0 &&
+        Array.from(elements.assignmentTableBody.querySelectorAll("input[type='checkbox']")).every(
+          (checkbox) => checkbox.checked
+        );
+      elements.selectAllCheckbox.checked = allChecked;
+    }
+  });
+
+  elements.assignmentTableBody.addEventListener('click', (event) => {
+    if (event.target.matches('.download-cv')) {
+      const candidateId = event.target.dataset.id;
+      const candidate = getCandidate(candidateId);
+      if (candidate?.cvFile) {
+        pushToast(`Download ${candidate.cvFile} from the ATS.`, 'success');
+      } else {
+        pushToast('No CV uploaded yet.', 'warning');
+      }
+    }
+  });
+
+  elements.interviewForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const candidateId = elements.interviewCandidateSelect.value;
+    const recruiterId = state.activeRecruiterId;
+    const date = elements.interviewDate.value;
+    const time = elements.interviewTime.value;
+    const mode = elements.interviewMode.value;
+    const location = elements.interviewLocation.value.trim() || (mode === 'Virtual' ? 'Virtual' : 'Headquarters');
+    if (!candidateId || !date || !time) {
+      pushToast('Please provide candidate, date and time to schedule.', 'warning');
+      return;
+    }
+
+    const interviewId = `i${Date.now()}`;
+    state.interviews.push({
+      id: interviewId,
+      candidateId,
+      recruiterId,
+      date,
+      time,
+      mode,
+      location
+    });
+    updateCandidateStage(candidateId, 'Interview Scheduled');
+    elements.interviewForm.reset();
+    prefillInterviewForm(null);
+    pushToast('Interview scheduled and candidate notified.', 'success');
+    renderRecruiterPanels();
+    renderAdminPanels();
+  });
+
+  elements.exportCsv.addEventListener('click', exportToCsv);
+  elements.exportPdf.addEventListener('click', () => {
+    window.print();
+    pushToast('Print dialog opened. Save as PDF to share the report.', 'success');
+  });
+
+  elements.themeToggle.addEventListener('click', () => {
+    state.theme = state.theme === 'light' ? 'dark' : 'light';
+    document.body.classList.toggle('theme-dark', state.theme === 'dark');
+    document.body.classList.toggle('theme-light', state.theme === 'light');
+    elements.themeToggle.querySelector('.icon').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+  });
+}
+
+function updateView() {
+  elements.adminSection.classList.toggle('is-visible', state.view === 'admin');
+  elements.recruiterSection.classList.toggle('is-visible', state.view === 'recruiter');
+  if (state.view === 'admin') {
+    renderAdminPanels();
+  } else {
+    renderRecruiterPanels();
+  }
+}
+
+function renderAll() {
+  renderAdminPanels();
+  renderRecruiterPanels();
+}
+
+function renderAdminPanels() {
+  renderGlobalKpis();
+  renderRecruiterPerformance();
+  renderTimeToDecision();
+  renderFunnel();
+  renderAssignmentTable();
+  renderRecruiterRoster();
+}
+
+function renderRecruiterPanels() {
+  if (!state.activeRecruiterId) {
+    state.activeRecruiterId = state.recruiters[0]?.id || null;
+  }
+  updateRecruiterSelector();
+  updateFocusSubtitle();
+  renderRecruiterProgress();
+  renderRecruiterQueue();
+  renderRecruiterNotifications();
+  renderInterviewOptions();
+  renderUpcomingInterviews();
+}
+
+function populateRecruiterOptions() {
+  const recruiterOptions = state.recruiters
+    .map((recruiter) => `<option value="${recruiter.id}">${recruiter.name}</option>`)
+    .join('');
+  elements.filterRecruiter.innerHTML = `<option value="all">All Recruiters</option>${recruiterOptions}`;
+  updateRecruiterSelector();
+}
+
+function updateRecruiterSelector() {
+  elements.recruiterViewSelector.innerHTML = state.recruiters
+    .map((recruiter) => `<option value="${recruiter.id}">${recruiter.name}</option>`)
+    .join('');
+  if (state.activeRecruiterId && !state.recruiters.find((r) => r.id === state.activeRecruiterId)) {
+    state.activeRecruiterId = state.recruiters[0]?.id || null;
+  }
+  if (state.activeRecruiterId) {
+    elements.recruiterViewSelector.value = state.activeRecruiterId;
+  }
+}
+
+function populateSkillFilter() {
+  const skills = new Set();
+  state.candidates.forEach((candidate) => {
+    candidate.skills.forEach((skill) => skills.add(skill));
+  });
+  elements.filterSkill.innerHTML =
+    '<option value="all">All Skills</option>' +
+    Array.from(skills)
+      .sort()
+      .map((skill) => `<option value="${skill}">${skill}</option>`)
+      .join('');
+}
+
+function renderGlobalKpis() {
+  const totalCandidates = state.candidates.length;
+  const pendingReviews = state.candidates.filter((c) => ['Applied', 'Reviewed'].includes(c.stage)).length;
+  const approved = state.candidates.filter((c) => c.stage === 'Approved').length;
+  const interviews = state.candidates.filter((c) => c.stage === 'Interview Scheduled').length;
+  const hiredCandidates = state.candidates.filter((c) => c.stage === 'Hired');
+  const avgTimeToHire = hiredCandidates.length
+    ? Math.round(
+        hiredCandidates.reduce((acc, candidate) => {
+          if (!candidate.stageCompleted) return acc;
+          const start = new Date(candidate.stageStarted);
+          const end = new Date(candidate.stageCompleted);
+          const diff = Math.max(0, (end - start) / (1000 * 60 * 60 * 24));
+          return acc + diff;
+        }, 0) / hiredCandidates.length
+      )
+    : 0;
+
+  const kpis = [
+    {
+      title: 'Total Candidates',
+      value: totalCandidates,
+      delta: totalCandidates - state.baseline.totalCandidates
+    },
+    {
+      title: 'Pending Reviews',
+      value: pendingReviews,
+      delta: pendingReviews - state.baseline.pendingReviews
+    },
+    {
+      title: 'Approved',
+      value: approved,
+      delta: approved - state.baseline.approved
+    },
+    {
+      title: 'Interviews Scheduled',
+      value: interviews,
+      delta: interviews - state.baseline.interviews
+    },
+    {
+      title: 'Avg Days to Hire',
+      value: `${avgTimeToHire || 0}d`,
+      delta: avgTimeToHire ? avgTimeToHire - state.baseline.avgTimeToHire : 0
+    }
+  ];
+
+  elements.kpiContainer.innerHTML = kpis
+    .map((kpi) => {
+      const deltaClass = kpi.delta >= 0 ? 'positive' : 'negative';
+      const deltaIcon = kpi.delta >= 0 ? '▲' : '▼';
+      const deltaValue = `${deltaIcon} ${Math.abs(kpi.delta)}`;
+      return `
+        <article class="kpi-card">
+          <header>
+            <p class="kpi-title">${kpi.title}</p>
+          </header>
+          <p class="kpi-value">${formatNumber(kpi.value)}</p>
+          <span class="kpi-delta ${deltaClass}">${deltaValue} vs last week</span>
+        </article>
+      `;
+    })
+    .join('');
+}
+
+function renderRecruiterPerformance() {
+  const performanceCards = state.recruiters.map((recruiter) => {
+    const assigned = state.candidates.filter((candidate) => candidate.assignedRecruiterId === recruiter.id);
+    const stageCounts = countByStage(assigned);
+    const processed = stageCounts.Reviewed + stageCounts.Approved + stageCounts['Interview Scheduled'] + stageCounts.Hired + stageCounts.Rejected;
+    const progress = recruiter.weeklyTarget
+      ? Math.min(100, Math.round((processed / recruiter.weeklyTarget) * 100))
+      : 0;
+    const pending = stageCounts.Applied;
+
+    return `
+      <article class="recruiter-card">
+        <header>
+          <h4>${recruiter.name}</h4>
+          <p>${recruiter.specialty}</p>
+          <span class="badge">${assigned.length} candidates</span>
+        </header>
+        <div>
+          <div class="progress-bar" aria-label="${progress}% of weekly target achieved">
+            <span style="width:${progress}%"></span>
+          </div>
+          <div class="recruiter-kpis">
+            <span class="tag">Processed<strong>${processed}</strong></span>
+            <span class="tag">Pending<strong>${pending}</strong></span>
+            <span class="tag">Interviews<strong>${stageCounts['Interview Scheduled']}</strong></span>
+          </div>
+        </div>
+        <div class="recruiter-kpis">
+          <span class="tag">Approved<strong>${stageCounts.Approved}</strong></span>
+          <span class="tag">Rejected<strong>${stageCounts.Rejected}</strong></span>
+          <span class="tag">Hired<strong>${stageCounts.Hired}</strong></span>
+        </div>
+      </article>
+    `;
+  });
+  elements.recruiterPerformance.innerHTML = performanceCards.join('');
+}
+
+function renderTimeToDecision() {
+  elements.timeToDecisionTable.innerHTML = state.recruiters
+    .map((recruiter) => {
+      const times = recruiter.decisionTimes;
+      return `
+        <tr>
+          <td>${recruiter.name}</td>
+          <td>${times.Reviewed}h</td>
+          <td>${times.Approved}h</td>
+          <td>${times.Rejected}h</td>
+          <td>${times['Interview Scheduled']}h</td>
+          <td>${times.Hired}h</td>
+        </tr>
+      `;
+    })
+    .join('');
+}
+
+function renderFunnel() {
+  const totals = countByStage(state.candidates);
+  const totalCandidates = state.candidates.length || 1;
+  elements.funnelContainer.innerHTML = STAGES.map((stage) => {
+    const count = totals[stage];
+    const percentage = Math.round((count / totalCandidates) * 100);
+    return `
+      <div class="funnel-step" data-percentage="${percentage}">
+        <p class="input-label">${stage}</p>
+        <strong>${count}</strong>
+        <p>${percentage}% of total</p>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderAssignmentTable() {
+  const filtered = getFilteredCandidates();
+  const rows = filtered
+    .map((candidate) => {
+      const recruiterOptions = state.recruiters
+        .map(
+          (recruiter) =>
+            `<option value="${recruiter.id}" ${candidate.assignedRecruiterId === recruiter.id ? 'selected' : ''}>${recruiter.name}</option>`
+        )
+        .join('');
+      const skillChips = candidate.skills
+        .map((skill) => `<span class="tag">${skill}</span>`)
+        .join('');
+      const timeInStage = formatTimeInStage(candidate);
+      return `
+        <tr data-id="${candidate.id}">
+          <td><input type="checkbox" class="candidate-select" data-id="${candidate.id}" /></td>
+          <td>
+            <div>
+              <strong>${candidate.name}</strong>
+              <p class="text-muted">${candidate.role}</p>
+              <p class="text-muted">${candidate.location}</p>
+            </div>
+          </td>
+          <td>
+            <select class="assignment-select" data-id="${candidate.id}">
+              <option value="">Unassigned</option>
+              ${recruiterOptions}
+            </select>
+          </td>
+          <td>
+            <div class="recruiter-kpis">${skillChips}</div>
+          </td>
+          <td>${candidate.experience}+ yrs</td>
+          <td>
+            <select class="stage-select" data-id="${candidate.id}">
+              ${STAGES.map((stage) => `<option value="${stage}" ${candidate.stage === stage ? 'selected' : ''}>${stage}</option>`).join('')}
+            </select>
+          </td>
+          <td>${timeInStage}</td>
+          <td>
+            ${candidate.cvFile ? `<button class="ghost download-cv" data-id="${candidate.id}">Download</button>` : `<label class="ghost" role="button">Upload<input class="cv-upload" data-id="${candidate.id}" type="file" accept=".pdf,.doc,.docx" hidden /></label>`}
+          </td>
+        </tr>
+      `;
+    })
+    .join('');
+  elements.assignmentTableBody.innerHTML = rows || `<tr><td colspan="8">No candidates match the selected filters.</td></tr>`;
+}
+
+function renderRecruiterRoster() {
+  elements.rosterList.innerHTML = state.recruiters
+    .map((recruiter) => {
+      const assignedCount = state.candidates.filter((candidate) => candidate.assignedRecruiterId === recruiter.id).length;
+      return `
+        <li class="list-item" data-id="${recruiter.id}">
+          <div>
+            <strong>${recruiter.name}</strong>
+            <p>${recruiter.specialty}</p>
+          </div>
+          <div class="recruiter-kpis">
+            <span class="tag">Assigned<strong>${assignedCount}</strong></span>
+            <button class="ghost" data-action="remove" data-id="${recruiter.id}">Remove</button>
+          </div>
+        </li>
+      `;
+    })
+    .join('');
+
+  elements.rosterList.querySelectorAll('button[data-action="remove"]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const recruiterId = button.dataset.id;
+      const recruiter = state.recruiters.find((r) => r.id === recruiterId);
+      if (!recruiter) return;
+      state.candidates.forEach((candidate) => {
+        if (candidate.assignedRecruiterId === recruiterId) {
+          candidate.assignedRecruiterId = '';
+        }
+      });
+      state.recruiters = state.recruiters.filter((r) => r.id !== recruiterId);
+      pushToast(`${recruiter.name} removed from the roster.`, 'warning');
+      populateRecruiterOptions();
+      renderAll();
+    });
+  });
+}
+
+function renderRecruiterProgress() {
+  const recruiter = getActiveRecruiter();
+  if (!recruiter) return;
+  const assigned = state.candidates.filter((candidate) => candidate.assignedRecruiterId === recruiter.id);
+  const stageCounts = countByStage(assigned);
+  const processed = stageCounts.Reviewed + stageCounts.Approved + stageCounts['Interview Scheduled'] + stageCounts.Hired + stageCounts.Rejected;
+  const progress = recruiter.weeklyTarget
+    ? Math.min(100, Math.round((processed / recruiter.weeklyTarget) * 100))
+    : 0;
+
+  elements.recruiterProgressRing.style.setProperty('--progress', progress);
+  elements.recruiterProgressRing.setAttribute('data-progress', `${progress}%`);
+  elements.recruiterMetrics.innerHTML = `
+    <div>
+      <dt>Assigned</dt>
+      <dd>${assigned.length}</dd>
+    </div>
+    <div>
+      <dt>Processed</dt>
+      <dd>${processed}</dd>
+    </div>
+    <div>
+      <dt>Pending</dt>
+      <dd>${stageCounts.Applied}</dd>
+    </div>
+    <div>
+      <dt>Interviews</dt>
+      <dd>${stageCounts['Interview Scheduled']}</dd>
+    </div>
+  `;
+}
+
+function renderRecruiterQueue() {
+  const recruiter = getActiveRecruiter();
+  if (!recruiter) return;
+  const filtered = getRecruiterQueueCandidates(recruiter.id);
+  elements.recruiterQueue.innerHTML = filtered
+    .map((candidate) => {
+      const timeInStage = formatTimeInStage(candidate);
+      const notifications = buildCandidateAlerts(candidate);
+      const notificationBadges = notifications
+        .map((note) => `<span class="badge">${note}</span>`)
+        .join('');
+      return `
+        <article class="queue-card" data-id="${candidate.id}">
+          <header>
+            <h4>${candidate.name}</h4>
+            <span class="badge">${candidate.stage}</span>
+          </header>
+          <p class="text-muted">${candidate.role} · ${candidate.location}</p>
+          <div class="meta">
+            <span>${candidate.experience}+ yrs experience</span>
+            <span>${candidate.skills.slice(0, 3).join(' • ')}</span>
+            <span>${timeInStage} in stage</span>
+          </div>
+          <div class="meta">${notificationBadges}</div>
+          <div class="actions">
+            <button class="ghost" data-action="cv" data-id="${candidate.id}">Review CV</button>
+            <button class="ghost" data-action="reject" data-id="${candidate.id}">Reject</button>
+            <button class="primary" data-action="approve" data-id="${candidate.id}">Approve</button>
+            <button class="primary" data-action="schedule" data-id="${candidate.id}">Schedule Interview</button>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+}
+
+function renderRecruiterNotifications() {
+  const recruiter = getActiveRecruiter();
+  if (!recruiter) return;
+  const notifications = buildNotificationsForRecruiter(recruiter.id);
+  elements.recruiterNotifications.innerHTML = notifications.length
+    ? notifications
+        .map((notification) => `
+          <li class="list-item">
+            <div>
+              <strong>${notification.title}</strong>
+              <p>${notification.description}</p>
+            </div>
+            <span class="badge">${notification.tag}</span>
+          </li>
+        `)
+        .join('')
+    : '<li class="list-item"><p>No pending notifications 🎉</p></li>';
+}
+
+function renderInterviewOptions() {
+  const recruiterId = state.activeRecruiterId;
+  const candidates = state.candidates.filter((candidate) => candidate.assignedRecruiterId === recruiterId);
+  elements.interviewCandidateSelect.innerHTML =
+    '<option value="" disabled selected>Select candidate</option>' +
+    candidates
+      .map((candidate) => `<option value="${candidate.id}">${candidate.name} · ${candidate.stage}</option>`)
+      .join('');
+}
+
+function renderUpcomingInterviews() {
+  const recruiterId = state.activeRecruiterId;
+  const upcoming = state.interviews
+    .filter((interview) => interview.recruiterId === recruiterId)
+    .sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+  elements.upcomingInterviews.innerHTML = upcoming.length
+    ? upcoming
+        .map((interview) => {
+          const candidate = getCandidate(interview.candidateId);
+          const date = new Date(`${interview.date}T${interview.time}`);
+          const formatted = date.toLocaleString(undefined, {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          });
+          return `
+            <article class="schedule-item">
+              <strong>${candidate?.name || 'Candidate'}</strong>
+              <span>${formatted} · ${interview.mode}</span>
+              <span>${interview.location}</span>
+            </article>
+          `;
+        })
+        .join('')
+    : '<p>No upcoming interviews yet.</p>';
+}
+
+function handleBulkAction(stage) {
+  const selectedIds = getSelectedCandidateIds();
+  if (!selectedIds.length) {
+    pushToast('Select at least one candidate to apply a bulk action.', 'warning');
+    return;
+  }
+  selectedIds.forEach((id) => updateCandidateStage(id, stage));
+  pushToast(`Updated ${selectedIds.length} candidates to ${stage}.`, 'success');
+  renderAll();
+}
+
+function handleBulkSchedule() {
+  const selectedIds = getSelectedCandidateIds();
+  if (!selectedIds.length) {
+    pushToast('Select candidates to bulk schedule interviews.', 'warning');
+    return;
+  }
+  const startDate = new Date();
+  selectedIds.forEach((id, index) => {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + (index % 3));
+    const isoDate = date.toISOString().split('T')[0];
+    const time = ['09:00', '11:00', '14:30'][index % 3];
+    const recruiterId = getCandidate(id)?.assignedRecruiterId || state.activeRecruiterId;
+    state.interviews.push({
+      id: `bulk-${Date.now()}-${index}`,
+      candidateId: id,
+      recruiterId,
+      date: isoDate,
+      time,
+      mode: 'Virtual',
+      location: 'Teams • autogenerated'
+    });
+    updateCandidateStage(id, 'Interview Scheduled');
+  });
+  pushToast(`Scheduled interviews for ${selectedIds.length} candidates.`, 'success');
+  renderAll();
+}
+
+function exportToCsv() {
+  const headers = ['Candidate', 'Recruiter', 'Stage', 'Experience (yrs)', 'Skills'];
+  const rows = state.candidates.map((candidate) => {
+    const recruiter = getRecruiter(candidate.assignedRecruiterId)?.name || 'Unassigned';
+    return [candidate.name, recruiter, candidate.stage, candidate.experience, candidate.skills.join(' | ')];
+  });
+  const csvContent = [headers.join(','), ...rows.map((row) => row.map((value) => `"${value}"`).join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'mw-recruitment-report.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  pushToast('CSV export generated successfully.', 'success');
+}
+
+function getFilteredCandidates() {
+  return state.candidates.filter((candidate) => {
+    if (state.filters.recruiter !== 'all' && candidate.assignedRecruiterId !== state.filters.recruiter) {
+      return false;
+    }
+    if (state.filters.stage !== 'all' && candidate.stage !== state.filters.stage) {
+      return false;
+    }
+    if (state.filters.skill !== 'all' && !candidate.skills.includes(state.filters.skill)) {
+      return false;
+    }
+    if (state.filters.search) {
+      const haystack = `${candidate.name} ${candidate.role} ${candidate.stage} ${candidate.skills.join(' ')}`.toLowerCase();
+      if (!haystack.includes(state.filters.search)) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+function getRecruiterQueueCandidates(recruiterId) {
+  const queue = state.candidates.filter((candidate) => candidate.assignedRecruiterId === recruiterId);
+  return queue.filter((candidate) => {
+    const filter = state.recruiterFilters.queue;
+    if (filter === 'pending') {
+      return ['Applied', 'Reviewed'].includes(candidate.stage);
+    }
+    if (filter === 'interview') {
+      return candidate.stage === 'Interview Scheduled';
+    }
+    if (filter === 'approved') {
+      return candidate.stage === 'Approved';
+    }
+    return true;
+  });
+}
+
+function countByStage(candidates) {
+  return STAGES.reduce((acc, stage) => {
+    acc[stage] = candidates.filter((candidate) => candidate.stage === stage).length;
+    return acc;
+  }, {});
+}
+
+function formatNumber(value) {
+  return typeof value === 'number' ? value.toLocaleString() : value;
+}
+
+function formatTimeInStage(candidate) {
+  if (!candidate.stageStarted) return '—';
+  const diff = Math.max(0, Math.floor((Date.now() - new Date(candidate.stageStarted).getTime()) / (1000 * 60 * 60 * 24)));
+  if (diff === 0) return 'Today';
+  if (diff === 1) return '1 day';
+  return `${diff} days`;
+}
+
+function updateCandidateStage(candidateId, stage) {
+  const candidate = getCandidate(candidateId);
+  if (!candidate) return;
+  candidate.stage = stage;
+  candidate.stageStarted = new Date().toISOString().split('T')[0];
+  if (stage === 'Interview Scheduled') {
+    pushToast(`${candidate.name} moved to interview scheduling.`, 'success');
+  }
+}
+
+function updateCandidateRecruiter(candidateId, recruiterId) {
+  const candidate = getCandidate(candidateId);
+  if (!candidate) return;
+  candidate.assignedRecruiterId = recruiterId;
+}
+
+function getCandidate(id) {
+  return state.candidates.find((candidate) => candidate.id === id);
+}
+
+function getRecruiter(id) {
+  return state.recruiters.find((recruiter) => recruiter.id === id);
+}
+
+function getActiveRecruiter() {
+  return getRecruiter(state.activeRecruiterId);
+}
+
+function getSelectedCandidateIds() {
+  return Array.from(elements.assignmentTableBody.querySelectorAll(".candidate-select:checked")).map(
+    (checkbox) => checkbox.dataset.id
+  );
+}
+
+function prefillInterviewForm(candidateId) {
+  if (!candidateId) {
+    elements.interviewCandidateSelect.value = '';
+    return;
+  }
+  elements.interviewCandidateSelect.value = candidateId;
+  const soon = new Date();
+  soon.setDate(soon.getDate() + 1);
+  elements.interviewDate.value = soon.toISOString().split('T')[0];
+  elements.interviewTime.value = '10:00';
+  elements.interviewMode.value = 'Virtual';
+}
+
+function pushToast(message, tone = 'success') {
+  if (!elements.toastContainer) return;
+  const toast = document.createElement('div');
+  toast.className = `toast ${tone}`;
+  toast.textContent = message;
+  elements.toastContainer.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-6px)';
+    setTimeout(() => toast.remove(), 220);
+  }, 3200);
+}
+
+function updateFocusSubtitle() {
+  const subtitle = document.getElementById('recruiter-progress-subtitle');
+  const mapping = {
+    today: 'Daily pace compared to goal.',
+    week: 'Week-to-date performance vs target.',
+    month: 'Monthly hiring momentum overview.'
+  };
+  subtitle.textContent = mapping[state.recruiterFilters.range];
+}
+
+function buildNotificationsForRecruiter(recruiterId) {
+  const notifications = [];
+  const candidates = state.candidates.filter((candidate) => candidate.assignedRecruiterId === recruiterId);
+  candidates.forEach((candidate) => {
+    const alerts = buildCandidateAlerts(candidate);
+    alerts.forEach((alert) => {
+      notifications.push({
+        title: candidate.name,
+        description: alert,
+        tag: candidate.stage
+      });
+    });
+  });
+  return notifications;
+}
+
+function buildCandidateAlerts(candidate) {
+  const alerts = [];
+  const timeInStage = Math.max(0, Math.floor((Date.now() - new Date(candidate.stageStarted).getTime()) / (1000 * 60 * 60 * 24)));
+  if (['Applied', 'Reviewed'].includes(candidate.stage) && timeInStage > 3) {
+    alerts.push(`${timeInStage} days waiting for review`);
+  }
+  if (candidate.stage === 'Interview Scheduled') {
+    const interview = state.interviews.find((item) => item.candidateId === candidate.id);
+    if (interview) {
+      const interviewDate = new Date(`${interview.date}T${interview.time}`);
+      const diffHours = (interviewDate - Date.now()) / (1000 * 60 * 60);
+      if (diffHours < 48 && diffHours > 0) {
+        alerts.push('Interview within 48h');
+      }
+      if (diffHours < 0) {
+        alerts.push('Interview overdue — update outcome');
+      }
+    }
+  }
+  if (!candidate.cvFile) {
+    alerts.push('CV missing');
+  }
+  return alerts;
+}
+
